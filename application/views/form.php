@@ -29,6 +29,8 @@
 
     <!-- Template Stylesheet -->
     <link href="<?= base_url('assets/') ?>css/style.css" rel="stylesheet">
+    <!-- Jquery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
 <body>
@@ -49,28 +51,13 @@
                     <h3 class="text-primary"><i class="fa fa-home me-2"></i>Fasilitas</h3>
                 </a>
                 <div class="navbar-nav w-100">
-                    <a href="index.html" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Elements</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="button.html" class="dropdown-item">Buttons</a>
-                            <a href="typography.html" class="dropdown-item">Typography</a>
-                            <a href="element.html" class="dropdown-item">Other Elements</a>
-                        </div>
-                    </div>
-                    <a href="widget.html" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Widgets</a>
-                    <a href="form.html" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Forms</a>
-                    <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
-                    <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown"><i class="far fa-file-alt me-2"></i>Pages</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="signin.html" class="dropdown-item">Sign In</a>
-                            <a href="signup.html" class="dropdown-item">Sign Up</a>
-                            <a href="404.html" class="dropdown-item">404 Error</a>
-                            <a href="blank.html" class="dropdown-item active">Blank Page</a>
-                        </div>
-                    </div>
+                    <a href="/fasilitas" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+
+                    <!-- <a href="widget.html" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Widgets</a> -->
+                    <a href="<?= base_url('index.php/welcome/form') ?>" class="nav-item nav-link active"><i class="fa fa-keyboard me-2"></i>Forms</a>
+                    <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
+                    <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a> -->
+
                 </div>
             </nav>
         </div>
@@ -93,7 +80,7 @@
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-secondary rounded h-100 p-4">
                             <h6 class="mb-4">Basic Form</h6>
-                            <form>
+                            <form method="post" action="<?= base_url('index.php/welcome/form_proses') ?>" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">NAMA FASILITAS</label>
                                     <input type="text" class="form-control" id="name_fasilitas" name="name_fasilitas">
@@ -118,7 +105,7 @@
                                     <label for="exampleInputEmail1" class="form-label">Longitude</label>
                                     <input type="file" class="form-control" id="file" name="file" readonly>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Sign in</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
                             </form>
                         </div>
                     </div>
@@ -156,7 +143,7 @@
 
 
         <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
     </div>
 
     <!-- JavaScript Libraries -->
@@ -176,6 +163,7 @@
     </script>
     <script>
         let map;
+        let markers = []
         var myModal = new bootstrap.Modal(document.getElementById('myModal'), {
             keyboard: false
         })
@@ -190,14 +178,48 @@
                 mapTypeId: google.maps.MapTypeId.HYBRID,
                 zoom: 15,
             });
+
             map.addListener("click", (e) => {
-                alert(e.latLng)
+                const data = e.latLng.toJSON()
+                const lat = data.lat
+                const lng = data.lng
+
+                $("#lat").val(lat)
+                $("#lng").val(lng)
+
+
+                addMarker(lat, lng)
+
             });
+
+
+            function addMarker(lat, lng) {
+                setMapOnAll(null);
+                markers = []
+                var marker = new google.maps.Marker({
+                    position: {
+                        lat: lat,
+                        lng: lng
+                    },
+                    map,
+                });
+                markers.push(marker)
+            }
+
+            function deleteMarker() {
+                clearMarksers()
+                markers = []
+            }
+
+            function setMapOnAll(map) {
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(map);
+                }
+            }
+            window.initMap = initMap;
+
+
         }
-
-
-
-        window.initMap = initMap;
     </script>
 </body>
 

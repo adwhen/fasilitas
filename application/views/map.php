@@ -6,6 +6,7 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         #map {
             height: 100%;
@@ -22,9 +23,6 @@
 </head>
 
 <body>
-
-
-
     <!-- The Modal -->
     <div class="modal" id="myModal">
         <div class="modal-dialog">
@@ -37,19 +35,30 @@
                 </div>
 
                 <!-- Modal body -->
-                <div class="modal-body">
+                <div class="modal-body" id="gambar">
                     <img style="width:100%;height:30vh" src="<?= base_url('assets/2021-10-22.jpg') ?>" alt="">
                 </div>
                 <hr>
                 <div class="container">
-                    <h6>Kapal KAyu</h6>
+                    <div id="judul">
+                        <h6>Kapal KAyu</h6>
+                    </div>
+
                     <table style="width: 100%;">
                         <tr>
                             <td style="text-align: center;">
-                                <img alt="" jstcache="247" src="//www.gstatic.com/images/icons/material/system_gm/1x/place_gm_blue_24dp.png" class="Liguzb" jsan="7.Liguzb,0.alt,8.src">
+                                <img id alt="" jstcache="247" src="//www.gstatic.com/images/icons/material/system_gm/1x/place_gm_blue_24dp.png" class="Liguzb" jsan="7.Liguzb,0.alt,8.src">
                             </td>
-                            <td>pulau baai bela bela</td>
+                            <td id="lokasi">pulau baai bela bela</td>
                         </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;"><img id alt="" jstcache="247" src="https://www.gstatic.com/images/icons/material/system_gm/1x/label_gm_blue_24dp.png" class="Liguzb" jsan="7.Liguzb,0.alt,8.src"></td>
+                            <td id="note"></td>
+                        </tr>
+
                     </table>
                 </div>
                 <!-- Modal footer -->
@@ -84,18 +93,17 @@
                 zoom: 15,
             });
 
-
-
-
-            const data = [{
-                lat: -3.9094728424575864,
-                lng: 103.29057241089914,
-                idx: 'naga'
-            }, {
-                lat: -3.9094728424575864,
-                lng: 102.29057241089914,
-                idx: 'astaga'
-            }]
+            const data = [
+                <?php foreach ($data as $dt) : ?> {
+                        lat: <?= $dt['lat'] ?>,
+                        lng: <?= $dt['lng'] ?>,
+                        judul: '<?= $dt['name_facility'] ?>',
+                        file: '<?= base_url('assets/img/') . $dt['file'] ?>',
+                        lokasi: '<?= $dt['locate'] ?>',
+                        note: '<?= $dt['note'] ?>'
+                    },
+                <?php endforeach; ?>
+            ]
             for (let index = 0; index < data.length; index++) {
 
                 var marker = new google.maps.Marker({
@@ -104,7 +112,15 @@
                         lng: parseFloat(data[index].lng)
                     },
                     map,
-                    data: data[index].idx
+                    data: {
+                        judul: data[index].judul,
+                        file: data[index].file,
+                        lat: data[index].lat,
+                        lng: data[index].lng,
+                        lokasi: data[index].lokasi,
+                        note: data[index].note
+                    }
+
                 });
 
                 attachSecretMessage(marker, marker.data);
@@ -114,6 +130,10 @@
         function attachSecretMessage(marker, data) {
             marker.addListener("click", () => {
                 console.log(data)
+                $("#judul").html("<h6>" + data.judul + "</h6>")
+                $("#lokasi").html(data.lokasi)
+                $("#gambar").html('<img style="width:100%;height:30vh" src="' + data.file + '" alt="">')
+                $("#note").html(data.note)
                 myModal.show()
             });
         }
